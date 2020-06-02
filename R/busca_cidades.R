@@ -1,33 +1,38 @@
-#' @title Busca Bairros por Estado e Cidade
-#' @description Busca bairros por estado  e cidade (search for neighbourhoods by state and city).
+#' @title Busca Cidades por Estado
+#' @description Busca cidades por estado.
+#' @importFrom purrr map_chr pluck
+#' @importFrom tibble tibble
 #' @importFrom httr GET add_headers content
 #' @param estado sigla do estado (acronym of the state).
-#' @param cidade nome da cidade (city name).
 #' @param token Token de autorização. Veja <http://cepaberto.com/users/register>.
+#' @examples
+#' \dontrun{
+#' ubatuba <- busca_cidades(estado = "AM", token = token)
+#' }
 #' @export
-busca_estado <- function(estado = c("AC", "AL", "AP", "AM", "BA", "CE",
+busca_cidades <- function(estado = c("AC", "AL", "AP", "AM", "BA", "CE",
                                     "DF", "ES", "GO", "MA", "MT", "MS",
                                     "MG", "PA", "PB", "PR", "PE", "PI",
                                     "RJ", "RN", "RS", "RO", "RR", "SC",
-                                    "SP", "SE", "TO"), cidade = NULL, token = NULL){
+                                    "SP", "SE", "TO"), token = NULL){
 
   estado <- match.arg(estado, choices = c("AC", "AL", "AP", "AM", "BA", "CE",
                                           "DF", "ES", "GO", "MA", "MT", "MS",
                                           "MG", "PA", "PB", "PR", "PE", "PI",
                                           "RJ", "RN", "RS", "RO", "RR", "SC",
                                           "SP", "SE", "TO"))
-  if(is.null(cidade)){
-    stop("precisa 'cidade'")
-  }
   if(is.null(token)){
     stop(msg)
   }
-  cidade <- gsub(pattern = " ", replacement = "%20", x = cidade)
-  url <- paste0(base_url, "address", "?estado=", estado, "&cidade=", cidade)
+
+  url <- paste0(base_url, "cities?estado=", estado)
   auth <- paste0("Token token=", token)
   r <- GET(url, add_headers(Authorization = auth)) %>% content("parsed")
-  bairros <- parse_api(r)
+  cities <- tibble(
+    estado = estado,
+    cidade = map_chr(r, ~{pluck(.x, "nome", .default = NA_character_)})
+  )
 
-  return(bairros)
+  return(cities)
 }
 
