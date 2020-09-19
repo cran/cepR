@@ -1,13 +1,13 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-[![AppVeyor Build
-Status](https://ci.appveyor.com/api/projects/status/github/RobertMyles/cepR?branch=master&svg=true)](https://ci.appveyor.com/project/RobertMyles/cepR)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/cepR)](https://cran.r-project.org/package=cepR)
 [![CRAN\_Download\_Badge](http://cranlogs.r-pkg.org/badges/cepR)](https://CRAN.R-project.org/package=cepR)
 [![CRAN\_Download\_Badge](http://cranlogs.r-pkg.org/badges/grand-total/cepR)](https://CRAN.R-project.org/package=cepR)
+![R-CMD-check](https://github.com/RobertMyles/cepR/workflows/R/badge.svg)
 
-# cepR 🇧🇷
+cepR 🇧🇷
+=======
 
 <a href=#uk>(English below)</a>
 
@@ -15,89 +15,97 @@ Status](https://ci.appveyor.com/api/projects/status/github/RobertMyles/cepR?bran
 dados postais do Brasil tais como nomes de bairros, cidades, estados,
 logradouros, CEPs e outras informações de interesse como altitude,
 longitude e latitude. Os dados são do projeto
-[CEPaberto](http://cepaberto.com/) e para utilizar este pacote é preciso
-se cadastrar no site do [CEPaberto](http://cepaberto.com/users/register)
-e obter um *token* pessoal. Você pode contribuir para o projeto
-CEPaberto clicando na aba [“Colaborar”](http://cepaberto.com/ceps) do
-site. Para instalar o **cepR** é só seguir as instruções abaixo. Um
-banco de dados com endereços postais do estado de São Paulo está
-incluído no pacote e pode ser acessado com `data("sp")`. Sugestões,
-*pull requests* e comentários são muito bem-vindos\!
+[CEPaberto](https://cepaberto.com/) e para utilizar este pacote é
+preciso se cadastrar no site do
+[CEPaberto](https://cepaberto.com/users/register) e obter um *token*
+pessoal. Você pode contribuir para o projeto CEPaberto clicando na aba
+[“Colaborar”](https://cepaberto.com/ceps) do site. Para instalar o
+**cepR** é só seguir as instruções abaixo. Um banco de dados com
+endereços postais do estado de São Paulo está incluído no pacote e pode
+ser acessado com `data("sp")`. Sugestões, *pull requests* e comentários
+são muito bem-vindos!
 
-## Instalação
+Instalação
+----------
 
 CRAN:
 
-``` r
-install.packages("cepR")
-```
+    install.packages("cepR")
 
 GitHub:
 
-``` r
-# install.packages("remotes")
-remotes::install_github("RobertMyles/cepR")
-```
+    # install.packages("remotes")
+    remotes::install_github("RobertMyles/cepR")
 
-## Uso
+Uso
+---
 
 É possível buscar os nomes das cidades e municipios com `busca_estado()`
 
-``` r
-library(cepR)
-token <- "XXXXXXXXXXX" # seu token
-sp <- busca_estado(estado = "SP", token = token)
+    library(cepR)
+    token <- "XXXXXXXXXXX" # seu token
+    sp <- busca_estado(estado = "SP", token = token)
 
-sp
-# A tibble: 863 x 2
-   estado                  municipio
-    <chr>                      <chr>
- 1     SP                 Adamantina
- 2     SP                     Adolfo
- 3     SP         Agisse (Rancharia)
- 4     SP                      Aguaí
- 5     SP             Águas da Prata
- 6     SP           Águas de Lindóia
- 7     SP     Águas de Santa Bárbara
- 8     SP         Águas de São Pedro
- 9     SP Água Vermelha (São Carlos)
-10     SP                     Agudos
-# ... with 853 more rows
-```
+    sp
+    # A tibble: 863 x 2
+       estado                  municipio
+        <chr>                      <chr>
+     1     SP                 Adamantina
+     2     SP                     Adolfo
+     3     SP         Agisse (Rancharia)
+     4     SP                      Aguaí
+     5     SP             Águas da Prata
+     6     SP           Águas de Lindóia
+     7     SP     Águas de Santa Bárbara
+     8     SP         Águas de São Pedro
+     9     SP Água Vermelha (São Carlos)
+    10     SP                     Agudos
+    # ... with 853 more rows
 
 Pode-se também buscar os endereços por CEP. Por exemplo, o valor
-*default* do CEP é o da Praça de Sé:
+*default* do CEP é o da Praça da Sé:
 
-``` r
-> busca_cep(token = token)
+    > busca_cep(token = token)
 
-# A tibble: 1 x 10
-  estado    cidade bairro      cep              logradouro       latitude
-   <chr>     <chr>  <chr>    <chr>                   <chr>          <chr>
-1     SP São Paulo     Sé 01001000 Praça da Sé, lado ímpar -23.5479099981
-# ... with 4 more variables: longitude <chr>, altitude <chr>, ddd <chr>,
-#   cod_IBGE <chr>
-```
+    # A tibble: 1 x 10
+      estado    cidade bairro      cep              logradouro       latitude
+       <chr>     <chr>  <chr>    <chr>                   <chr>          <chr>
+    1     SP São Paulo     Sé 01001000 Praça da Sé, lado ímpar -23.5479099981
+    # ... with 4 more variables: longitude <chr>, altitude <chr>, ddd <chr>,
+    #   cod_IBGE <chr>
+
+Também é possível buscar por múltiplos CEPs. É **importante** atentar
+para o limite de 1 pesquisa por segundo por token, portanto pesquisas
+com muitos itens podem demorar bastante. O valor *default* dos CEPs da
+função busca\_multi são ambos na Praça da Sé:
+
+    > busca_multi(token = token)
+    # A tibble: 2 x 10
+      estado cidade    bairro cep      logradouro  latitude longitude altitude   ddd cod_IBGE
+      <chr>  <chr>     <chr>  <chr>    <chr>          <dbl>     <dbl>    <dbl> <dbl> <chr>   
+    1 SP     São Paulo Sé     01001000 Praça da Sé    -23.5     -46.6      760    11 3550308 
+    2 SP     São Paulo Sé     01001001 Praça da Sé    -23.5     -46.6      760    11 3550308 
 
 Para mais, veja o projeto CEPAberto.
 
-# <a name="uk">cepR</a> 🇬🇧
+<a name="uk">cepR</a> 🇬🇧
+========================
 
 **cepR** is a package for accessing Brazilian address data:
 neighbourhood names, city and state names, actual addresses, postal
 codes, and other info such as altitude, longitude & latitude. The data
-come from the [CEPaberto](http://cepaberto.com/) project, and to use the
-package, you’ll need a personal access token from the CEP Aberto site.
-Suggestions, pull requests, criticisms all welcome. You can install the
-package as shown in *Instalação* above. If you use it regularly, please
-consider donating to the CEPAberto project.
+come from the [CEPaberto](https://cepaberto.com/) project, and to use
+the package, you’ll need a personal access token from the CEP Aberto
+site. Suggestions, pull requests, criticisms all welcome. You can
+install the package as shown in *Instalação* above. If you use it
+regularly, please consider donating to the CEPAberto project.
 
 The package is aimed at a Brazilian audience, so if you don’t speak
 Portuguese:
 
-  - bairro = neighbourhood;
-  - cep = postal code;
-  - logadouro = address;
-  - município = municipality.
+-   bairro = neighbourhood;
+-   cep = postal code;
+-   logadouro = address;
+-   município = municipality.
 
 The others aren’t too hard to figure out 🐵.
